@@ -1,14 +1,18 @@
 
+require('app-module-path').addPath(__dirname);
 
-import appLoader from 'loaders/express/app'
-import socketLoader from 'loaders/ws/socket'
-import {LOAD_WEBSOCKET} from '/config/define'
+const appLoader = require('./loaders/express/app')
+const socketLoader = require('./loaders/ws/socket')
+const define = require('config/define')
+const env = require('config/env');
+
+
 
 function startServer(){
-    const app = appLoader()
 
-    if (LOAD_WEBSOCKET){
-        socketLoader(app)
+
+    if (define.LOAD_WEBSOCKET){
+        socketLoader(appLoader)
     }
 }
 

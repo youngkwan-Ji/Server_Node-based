@@ -1,7 +1,7 @@
 const socketModule = require('ws');
 
-export default (webApp) => {
-    const wss = new socketModule.Server({ webApp });
+module.exports = (webApp) => {
+    const wss = new socketModule.Server({ server:webApp });
 
     wss.on('connection', (ws, req) => {
         const ip = req.headers['x-forwarded-for'] || req.ip;

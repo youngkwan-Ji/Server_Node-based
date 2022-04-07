@@ -11,12 +11,16 @@ require('dotenv').config();
   .env 파일에서 변수 불러오기
   노출되서는 안되는 중요한 정보를 .env 파일에 넣고, 이를 꺼내오는 방식으로 사용해 보안을 높일 수 있다.
 */
-export default {
-    port : process.env.PORT
-    , host : process.env.HOST
-    , username : process.env.USER
-    , password : process.env.PASSWORD
-}
+module.exports.port = process.env.PORT
+module.exports.host = process.env.HOST
+
+
+// module.exports = {
+//     port : process.env.PORT
+//     , host : process.env.HOST
+//     , username : process.env.USER
+//     , password : process.env.PASSWORD
+// }
 // const host = process.env.HOST
 // const username = process.env.USER
 // const password = process.env.PASSWORD

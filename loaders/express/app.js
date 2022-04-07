@@ -1,7 +1,9 @@
-// const env = require('/config/env');
-import {env} from '/config/env'
+const env = require('config/env');
+const define = require('config/define')
+const debug = require('debug')('webapplication:server');
 const createError = require('http-errors');
 const express = require('express');
+const http = require('http');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -10,46 +12,125 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 const appModule = express();
+var server;
 
-import {LOAD_WEBAPP} from '/config/define'
 
-export default () => {
-  if (!LOAD_WEBAPP){
-    return appModule
-  }else{
-// view engine setup
-    appModule.set('port', env.port)
+var port = normalizePort(process.env.PORT || '3000');
 
-    appModule.set('views', path.join(__dirname, 'views'));
-    appModule.set('view engine', 'jade');
+if (!define.LOAD_WEBAPP){
 
-    appModule.use(logger('dev'));
-    appModule.use(express.json());
-    appModule.use(express.urlencoded({ extended: false }));
-    appModule.use(cookieParser());
-    appModule.use(express.static(path.join(__dirname, 'public')));
+}else{
 
-    appModule.use('/', indexRouter);
-    appModule.use('/users', usersRouter);
+  appModule.set('port', port);
+  appModule.set('views', path.join(__dirname, 'views'));
+  appModule.set('view engine', 'jade');
+
+  appModule.use(logger('dev'));
+  appModule.use(express.json());
+  appModule.use(express.urlencoded({ extended: false }));
+  appModule.use(cookieParser());
+  appModule.use(express.static(path.join(__dirname, 'public')));
+
+  appModule.use('/', indexRouter);
+  appModule.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
-    appModule.use(function(req, res, next) {
-      next(createError(404));
-    });
+  appModule.use(function(req, res, next) {
+    next(createError(404));
+  });
 
 // error handler
-    appModule.use(function(err, req, res, next) {
-      // set locals, only providing error in development
-      res.locals.message = err.message;
-      res.locals.error = req.app.get('env') === 'development' ? err : {};
+  appModule.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-      // render the error page
-      res.status(err.status || 500);
-      res.render('error');
-    });
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  });
 
-    return appModule
+  createHTTPServer(appModule)
+}
+
+
+
+function createHTTPServer(webApp){
+  /**
+   * Create HTTP server.
+   */
+  server = http.createServer(webApp);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+}
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+      ? 'Pipe ' + port
+      : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
   }
 }
 
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+
+
+module.exports = server
 
