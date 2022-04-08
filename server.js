@@ -10,7 +10,6 @@ const env = require('config/env');
 
 function startServer(){
 
-
     if (define.LOAD_WEBSOCKET){
         socketLoader(appLoader)
     }
