@@ -13,6 +13,8 @@ require('dotenv').config();
 */
 module.exports.port = process.env.PORT
 module.exports.host = process.env.HOST
+module.exports.BINANCE_API_KEY = process.env.BINANCE_API_KEY
+module.exports.BINANCE_SECRET_KEY = process.env.BINANCE_SECRET_KEY
 
 
 // module.exports = {
