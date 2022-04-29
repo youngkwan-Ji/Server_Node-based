@@ -10,6 +10,7 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const marketRouter = require('./routes/market');
 
 const appModule = express();
 var server;
@@ -23,7 +24,7 @@ if (!define.LOAD_WEBAPP){
 
   appModule.set('port', port);
   appModule.set('views', path.join(__dirname, 'views'));
-  appModule.set('view engine', 'jade');
+  // appModule.set('view engine', 'jade');
 
   appModule.use(logger('dev'));
   appModule.use(express.json());
@@ -32,7 +33,8 @@ if (!define.LOAD_WEBAPP){
   appModule.use(express.static(path.join(__dirname, 'public')));
 
   appModule.use('/', indexRouter);
-  appModule.use('/users', usersRouter);
+  // appModule.use('/users', usersRouter);
+  appModule.use('/market', marketRouter);
 
 
 // catch 404 and forward to error handler

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./loaders/bin/www"
+    "start": "node ./server.js"
   },
   "dependencies": {
     "app-module-path": "^2.2.0",
