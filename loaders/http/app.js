@@ -3,7 +3,7 @@ const define = require('config/define')
 const debug = require('debug')('webapplication:server');
 const createError = require('http-errors');
 const express = require('express');
-const http = require('http');
+const httpModule = require('http');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -13,7 +13,7 @@ const usersRouter = require('./routes/users');
 const marketRouter = require('./routes/market');
 
 const appModule = express();
-var server;
+var http;
 
 
 var port = normalizePort(process.env.PORT || '3000');
@@ -62,14 +62,14 @@ function createHTTPServer(webApp){
   /**
    * Create HTTP server.
    */
-  server = http.createServer(webApp);
+  http = httpModule.createServer(webApp);
 
   /**
    * Listen on provided port, on all network interfaces.
    */
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening);
+  http.listen(port);
+  http.on('error', onError);
+  http.on('listening', onListening);
 }
 
 /**
@@ -125,7 +125,7 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
+  var addr = http.address();
   var bind = typeof addr === 'string'
       ? 'pipe ' + addr
       : 'port ' + addr.port;
@@ -134,5 +134,5 @@ function onListening() {
 
 
 
-module.exports = server
+module.exports = http
 
