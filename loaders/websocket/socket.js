@@ -2,7 +2,7 @@
 const {Server} = require('socket.io');
 
 var io;
-
+var dataList = []
 module.exports.initSocket = function (webApp) {
     io = new Server(webApp)
     //     ,{
@@ -33,10 +33,32 @@ module.exports.initSocket = function (webApp) {
 
 module.exports.addKlineWSListener = function (){
     const wsKline = require('services/binance/websocket/spot/klineWS')(function (data) {
+        var r = parseKlineData(JSON.parse(String(data)));
+        if (r.last){
+            dataList.push(r)
+            console.log(JSON.stringify(dataList))
+        }
+
         io.emit("wsKline", {
             data: String(data)
         })
     });
+}
+
+function parseKlineData(d) {
+    var res= {}
+    res.date = d.k.t;
+    res.open = d.k.o;
+    res.high = d.k.h;
+    res.low = d.k.l;
+    res.close = d.k.c;
+    res.volume = d.k.v;
+    res.quoteAssetVolume = d.k.q;
+    res.numberOfTrades = d.k.n;
+    res.takerBuyBaseAssetVolume = d.k.V;
+    res.takerBuyQuoteAssetVolume = d.k.Q;
+    res.last = d.k.x;
+    return res
 }
 
 
