@@ -1,5 +1,7 @@
 // const socketModule = require('ws');
 const {Server} = require('socket.io');
+const {PythonShell} = require('python-shell');
+const fs = require("fs");
 
 var io;
 var dataList = []
@@ -35,12 +37,43 @@ module.exports.addKlineWSListener = function (){
     const wsKline = require('services/binance/websocket/spot/klineWS')(function (data) {
         var r = parseKlineData(JSON.parse(String(data)));
         if (r.last){
-            dataList.push(r)
-            console.log(JSON.stringify(dataList))
+            if (dataList.length < 4){
+                dataList.push(r)
+            }else {
+                dataList = dataList.slice(1, 4)
+                console.log(dataList.length)
+                dataList.push(r)
+                console.log(dataList.length)
+                predictKlienData(JSON.stringify(dataList))
+            }
         }
 
         io.emit("wsKline", {
             data: String(data)
+        })
+    });
+}
+
+function predictKlienData(prevData){
+    var options = {
+        mode: 'text',
+        pythonPath: '',
+        pythonOptions: ['-u'],
+        scriptPath: '',
+        args: [prevData]
+    };
+    PythonShell.run('services/ML/pre-processing_BinanceKline.py', options, function (err, results) {
+        if (err) {
+            console.log("pre-processing_BinanceKline.py file Run FAIL , reason :" + err);
+            return +"processing_BinanceKline : " + "분석 중 문제 발생"
+        }
+
+        console.log("predictKlienData START!!!!");
+
+        res = JSON.stringify(results);
+        console.log("predictKlienData Result : " + res);
+        io.emit("predictWsKline", {
+            data: res
         })
     });
 }
