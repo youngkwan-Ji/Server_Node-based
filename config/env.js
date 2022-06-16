@@ -15,7 +15,8 @@ module.exports.port = process.env.PORT
 module.exports.host = process.env.HOST
 module.exports.BINANCE_API_KEY = process.env.BINANCE_API_KEY
 module.exports.BINANCE_SECRET_KEY = process.env.BINANCE_SECRET_KEY
-
+module.exports.HBASE_HOST = process.env.HBASE_HOST
+module.exports.HBASE_PORT = process.env.HBASE_PORT
 
 // module.exports = {
 //     port : process.env.PORT

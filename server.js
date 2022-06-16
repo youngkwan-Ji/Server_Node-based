@@ -12,7 +12,9 @@ var io;
 function startServer() {
     if (define.LOAD_WEBSOCKET) {
         io = initSocket(httpLoader)
-        addKlineWSListener()
+        const serv = require("services/hbase-client/hbaseService").initTable
+        serv()
+        // addKlineWSListener()
     }
 }
 
